@@ -1,0 +1,29 @@
+hyperparams:
+  extractor: {}
+  selector: 
+    selected_features: ['season','yr', 'mnth', 'hr', 'holiday', 'weekday', 'workingday', 'weathersit', 'temp', 'atemp', 'hum', 'windspeed', 'cnt - 24hr']
+  regressor:
+    n_estimators: 100
+    max_depth: null
+
+data:
+  filepath: ./timeseries.csv
+
+metrics:
+  - name: mean absolute error
+    params: {}
+
+search:
+  jobs: -1
+  grid:
+    extractor: {}
+    selector: {}
+    regressor:
+      n_estimators: [100]
+      max_depth: [5,10,30,10]
+
+export:
+  output_dir: ./models
+
+reports:
+  dir: ./reports
