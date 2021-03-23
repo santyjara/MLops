@@ -37,6 +37,7 @@ def train(config_file: str):
     hyperparams = _load_config(config_file, "hyperparams")
     split = "train"
     X, y = _get_dataset(_load_config(config_file, "data"), splits=[split])[split]
+    print(hyperparams)
     estimator = model.build_estimator(hyperparams)
     estimator.fit(X, y)
     output_dir = _load_config(config_file, "export")["output_dir"]
@@ -77,6 +78,7 @@ def find_hyperparams(
     dummy_hyperparams = {name: {} for name in param_grid.keys()}
     estimator = model.build_estimator(dummy_hyperparams)
     scoring = metrics.get_scoring_function(metric["name"], **metric["params"])
+    print(param_grid)
     gs = GridSearchCV(
         estimator,
         _param_grid_to_sklearn_format(param_grid),
@@ -88,7 +90,11 @@ def find_hyperparams(
     X, y = _get_dataset(_load_config(config_file, "data"), splits=[split])[split]
     gs.fit(X, y)
     hyperparams = _param_grid_to_custom_format(gs.best_params_)
-    estimator = model.build_estimator(hyperparams)
+    
+    param_grid.update(hyperparams)
+    
+    estimator = model.build_estimator(param_grid)
+    estimator.fit(X, y)
     output_dir = _load_config(config_file, "export")["output_dir"]
     _save_versioned_estimator(estimator, hyperparams, output_dir)
 
